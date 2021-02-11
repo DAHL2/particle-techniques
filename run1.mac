@@ -8,6 +8,10 @@
 #
 # Initialize kernel
 /run/initialize
+
+# do not randomize type of primary particle
+/B5/generator/randomizePrimary false
+
 #
 # Defaults:
 # armAngle 30. deg

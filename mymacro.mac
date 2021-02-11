@@ -5,6 +5,9 @@
 # Initialize kernel
 /run/initialize 
 
+# do not randomize type of primary particle
+/B5/generator/randomizePrimary false
+
 # Set the ange between the two arms
 /B5/detector/armAngle 0. deg
 
