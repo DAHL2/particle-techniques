@@ -145,12 +145,6 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   G4UserLimits* userLimits = new G4UserLimits(1*m);
   fMagneticLogical->SetUserLimits(userLimits);
   
-  auto leadBlockSolid  = new G4Box("leadBlock",-1.05*m,30.*cm,5.*cm);
-  auto leadBlockLogical= new G4LogicalVolume(leadBlockSolid,lead,"leadBlockLogical");
-  new G4PVPlacement(0,G4ThreeVector(0.,0.,-1.05*m),leadBlockLogical,
-                    "leadBlockPhysical",worldLogical,
-                    false,0,checkOverlaps);
-
   // first arm
   auto firstArmSolid  = new G4Box("firstArmBox",1.5*m,1.*m,3.*m);
   auto firstArmLogical= new G4LogicalVolume(firstArmSolid,air,"firstArmLogical");

@@ -114,6 +114,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   auto scintillator = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
+  auto vac = G4Material::GetMaterial("G4_Galactic");
   
   // Option to switch on/off checking of volumes overlaps
   //
@@ -122,14 +123,14 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   // geometries --------------------------------------------------------------
   // experimental hall (world volume)
   auto worldSolid    = new G4Box("worldBox",10.*m,3.*m,10.*m);
-  auto worldLogical  = new G4LogicalVolume(worldSolid,air,"worldLogical");
+  auto worldLogical  = new G4LogicalVolume(worldSolid,vac,"worldLogical");
   auto worldPhysical = new G4PVPlacement(0,G4ThreeVector(),worldLogical,"worldPhysical",0,
                         false,0,checkOverlaps);
   
   // Tube with Local Magnetic field
   //auto magneticSolid = new G4Tubs("magneticTubs",0.,1.*m,1.*m,0.,360.*deg);
   auto magneticSolid = new G4Box("magneticTubs",1.*m,1.*m,1.*m);
-  fMagneticLogical = new G4LogicalVolume(magneticSolid, air, "magneticLogical");
+  fMagneticLogical = new G4LogicalVolume(magneticSolid, vac, "magneticLogical");
 
   // placement of Tube
   // G4RotationMatrix* fieldRot = new G4RotationMatrix();
@@ -145,22 +146,16 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   G4UserLimits* userLimits = new G4UserLimits(1*m);
   fMagneticLogical->SetUserLimits(userLimits);
   
-  auto leadBlockSolid  = new G4Box("leadBlock",-1.05*m,30.*cm,5.*cm);
-  auto leadBlockLogical= new G4LogicalVolume(leadBlockSolid,lead,"leadBlockLogical");
-  new G4PVPlacement(0,G4ThreeVector(0.,0.,-1.05*m),leadBlockLogical,
-                    "leadBlockPhysical",worldLogical,
-                    false,0,checkOverlaps);
-
   // first arm
   auto firstArmSolid  = new G4Box("firstArmBox",1.5*m,1.*m,3.*m);
-  auto firstArmLogical= new G4LogicalVolume(firstArmSolid,air,"firstArmLogical");
+  auto firstArmLogical= new G4LogicalVolume(firstArmSolid,vac,"firstArmLogical");
   new G4PVPlacement(0,G4ThreeVector(0.,0.,-5.*m),firstArmLogical,
                     "firstArmPhysical",worldLogical,
                     false,0,checkOverlaps);
   
   // second arm
   auto secondArmSolid  = new G4Box("secondArmBox",2.*m,2.*m,3.5*m);
-  auto secondArmLogical= new G4LogicalVolume(secondArmSolid,air,"secondArmLogical");
+  auto secondArmLogical= new G4LogicalVolume(secondArmSolid,vac,"secondArmLogical");
   auto x = -5.*m * std::sin(fArmAngle);
   auto z =  5.*m * std::cos(fArmAngle);
   fSecondArmPhys = new G4PVPlacement(fArmRotation,G4ThreeVector(x,0.,z),secondArmLogical,
@@ -180,7 +175,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   
   // drift chambers in first arm
   auto chamber1Solid  = new G4Box("chamber1Box",1.*m,30.*cm,1.*cm);
-  auto chamber1Logical= new G4LogicalVolume(chamber1Solid,argonGas,"chamber1Logical");
+  auto chamber1Logical= new G4LogicalVolume(chamber1Solid,vac,"chamber1Logical");
 
   for (auto i=0;i<kNofChambers;i++) {
     G4double z1 = (i-kNofChambers/2)*0.5*m;
@@ -191,7 +186,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   
   // "virtual" wire plane
   auto wirePlane1Solid = new G4Box("wirePlane1Box",1.*m,30.*cm,0.1*mm);
-  fWirePlane1Logical = new G4LogicalVolume(wirePlane1Solid,argonGas,"wirePlane1Logical");
+  fWirePlane1Logical = new G4LogicalVolume(wirePlane1Solid,vac,"wirePlane1Logical");
   new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),fWirePlane1Logical,
                     "wirePlane1Physical",chamber1Logical,
                     false,0,checkOverlaps);
@@ -209,7 +204,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   
   // drift chambers in second arm
   auto chamber2Solid  = new G4Box("chamber2Box",1.5*m,30.*cm,1.*cm);
-  auto chamber2Logical= new G4LogicalVolume(chamber2Solid,argonGas,"chamber2Logical");
+  auto chamber2Logical= new G4LogicalVolume(chamber2Solid,vac,"chamber2Logical");
   
   for (auto i=0;i<kNofChambers;i++) {
     G4double z2 = (i-kNofChambers/2)*0.5*m - 1.5*m;
@@ -220,7 +215,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
   
   // "virtual" wire plane
   auto wirePlane2Solid = new G4Box("wirePlane2Box",1.5*m,30.*cm,0.1*mm);
-  fWirePlane2Logical = new G4LogicalVolume(wirePlane2Solid,argonGas,"wirePlane2Logical");
+  fWirePlane2Logical = new G4LogicalVolume(wirePlane2Solid,vac,"wirePlane2Logical");
   new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),fWirePlane2Logical,
                     "wirePlane2Physical",chamber2Logical,
                     false,0,checkOverlaps);
@@ -391,7 +386,7 @@ void B5DetectorConstruction::ConstructMaterials()
   nistManager->FindOrBuildMaterial("G4_Pb");
   
   // Vacuum "Galactic"
-  // nistManager->FindOrBuildMaterial("G4_Galactic");
+  nistManager->FindOrBuildMaterial("G4_Galactic");
 
   // Vacuum "Air with low density"
   // auto air = G4Material::GetMaterial("G4_AIR");
